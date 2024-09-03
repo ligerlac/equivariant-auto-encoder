@@ -20,12 +20,7 @@ def main(args):
     model = load_model(f"{args.input}/model.keras")
 
     log = pd.read_csv(f"{args.input}/training.log")
-    draw.plot_loss_history(
-        log["loss"], log["val_loss"], f"training-history-{model.name}"
-    )
-    draw.plot_loss_history_w_outliers(
-        log["loss"], log["val_loss"], log["outlier_loss"], f"training-history-{model.name}"
-    )
+    draw.plot_loss_history(log, f"training-history-{model.name}")
 
 
 if __name__ == "__main__":
