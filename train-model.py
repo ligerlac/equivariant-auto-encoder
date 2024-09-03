@@ -6,24 +6,27 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.datasets import fashion_mnist
 
 from utils import IsValidFile, CreateFolder
-from models import TrivialModel
+from models import TrivialModel, BaselineAutoEncoder
 
 
 def main(args):
 
     (train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
+    train_shirts, test_shirts = train_images[train_labels==0], test_images[test_labels==0]
+    outliers = test_images[test_labels!=0]
 
-    model = TrivialModel.get_model()
+    # model = TrivialModel.get_model()
+    model = BaselineAutoEncoder.get_model()
     
     model.compile(optimizer=Adam(learning_rate=0.001), loss="mse")
     mc = ModelCheckpoint(f"{args.output}/model.keras", save_best_only=True)
     log = CSVLogger(f"{args.output}/training.log", append=False)
 
     model.fit(
-        x=train_images,
-        y=train_images,
+        x=train_shirts,
+        y=train_shirts,
         epochs=args.epochs,
-        validation_data=(test_images, test_images),
+        validation_data=(test_shirts, test_shirts),
         callbacks=[mc, log],
         verbose=args.verbose,
     )
