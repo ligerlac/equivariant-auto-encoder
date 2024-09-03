@@ -33,3 +33,16 @@ class Draw:
         plt.xlabel("Epoch")
         plt.ylabel("Loss")
         self._save_fig(name)
+
+
+    def imshow_multi(
+        self, images: list[npt.NDArray], titles: list[str], name: str = 'imshow-multi'
+    ):
+        assert len(images) == len(titles), 'number of images and titles mismatch'
+        n = len(images)
+        fig, axs = plt.subplots(1, n)
+        for i in range(n):
+            axs[i].imshow(images[i])
+            axs[i].set_title(titles[i])
+            axs[i].axis('off')
+        self._save_fig(name)
