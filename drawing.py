@@ -26,14 +26,22 @@ class Draw:
         self, training_loss: npt.NDArray, validation_loss: npt.NDArray, name: str
     ):
         plt.plot(np.arange(1, len(training_loss) + 1), training_loss, label="Training")
-        plt.plot(
-            np.arange(1, len(validation_loss) + 1), validation_loss, label="Validation"
-        )
+        plt.plot(np.arange(1, len(validation_loss) + 1), validation_loss, label="Validation")
         plt.legend(loc="upper right")
         plt.xlabel("Epoch")
         plt.ylabel("Loss")
         self._save_fig(name)
 
+    def plot_loss_history_w_outliers(
+        self, training_loss: npt.NDArray, validation_loss: npt.NDArray, outlier_loss: npt.NDArray, name: str
+    ):
+        plt.plot(np.arange(1, len(training_loss) + 1), training_loss, label="Training")
+        plt.plot(np.arange(1, len(validation_loss) + 1), validation_loss, label="Validation")
+        plt.plot(np.arange(1, len(outlier_loss) + 1), outlier_loss, label="Outlier")
+        plt.legend(loc="upper right")
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
+        self._save_fig(name)
 
     def imshow_multi(
         self, images: list[npt.NDArray], titles: list[str], name: str = 'imshow-multi'

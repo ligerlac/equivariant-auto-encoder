@@ -1,6 +1,22 @@
 import argparse
 import os
 
+import tensorflow as tf
+from tensorflow.keras.callbacks import Callback
+
+
+class CustomLoss(Callback):
+    def __init__(self, inputs, name='custom_loss'):
+        super().__init__()
+        self.inputs = inputs
+        self.name = name
+
+    def on_epoch_end(self, epoch, log):
+        loss_fn = tf.keras.losses.get(self.model.loss)
+        preds = self.model.predict(self.inputs, verbose=0)
+        loss = loss_fn(self.inputs.flatten(), preds.flatten()).numpy()
+        log[self.name] = loss
+
 
 class IsReadableDir(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):

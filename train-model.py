@@ -1,11 +1,13 @@
 import argparse
 
 from pathlib import Path
+import numpy as np
+import tensorflow as tf
 from tensorflow.keras.callbacks import ModelCheckpoint, CSVLogger
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.datasets import fashion_mnist
 
-from utils import IsValidFile, CreateFolder
+from utils import IsValidFile, CreateFolder, CustomLoss
 from models import TrivialModel, BaselineAutoEncoder
 
 
@@ -19,7 +21,9 @@ def main(args):
     model = BaselineAutoEncoder.get_model()
     
     model.compile(optimizer=Adam(learning_rate=0.001), loss="mse")
+
     mc = ModelCheckpoint(f"{args.output}/model.keras", save_best_only=True)
+    oll = CustomLoss(inputs=outliers, name='outlier_loss')
     log = CSVLogger(f"{args.output}/training.log", append=False)
 
     model.fit(
@@ -27,7 +31,7 @@ def main(args):
         y=train_shirts,
         epochs=args.epochs,
         validation_data=(test_shirts, test_shirts),
-        callbacks=[mc, log],
+        callbacks=[mc, oll, log],
         verbose=args.verbose,
     )
 

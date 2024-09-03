@@ -15,12 +15,16 @@ def main(args):
     draw = Draw(output_dir=args.output, interactive=args.interactive)
 
     (train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
+    train_shirts, test_shirts = train_images[train_labels==0], test_images[test_labels==0]
 
     model = load_model(f"{args.input}/model.keras")
 
     log = pd.read_csv(f"{args.input}/training.log")
     draw.plot_loss_history(
         log["loss"], log["val_loss"], f"training-history-{model.name}"
+    )
+    draw.plot_loss_history_w_outliers(
+        log["loss"], log["val_loss"], log["outlier_loss"], f"training-history-{model.name}"
     )
 
 
