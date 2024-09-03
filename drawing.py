@@ -45,3 +45,17 @@ class Draw:
             axs[i].set_title(titles[i])
             axs[i].axis('off')
         self._save_fig(name)
+
+    def plot_val_loss_vs_latent_size(
+        self, latent_sizes, best_val_losses, name: str
+    ):
+        plt.plot(latent_sizes, best_val_losses)
+        self._save_fig(name)
+
+    def plot_loss_vs_latent_size(
+        self, latent_sizes, best_val_losses, outlier_losses, name: str
+    ):
+        plt.plot(latent_sizes, best_val_losses)
+        plt.plot(latent_sizes, outlier_losses)
+        self._save_fig(name)
+
