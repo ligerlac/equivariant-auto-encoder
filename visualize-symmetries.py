@@ -7,7 +7,9 @@ from pathlib import Path
 from tensorflow.keras.datasets import fashion_mnist
 from tensorflow.keras.models import load_model
 
-from utils import IsValidFile, IsReadableDir, CreateFolder
+from models import BaselineAutoEncoder, BruteForceMultiplied
+
+from utils import IsValidFile, IsReadableDir, CreateFolder, predict_single_image
 from drawing import Draw
 
 
@@ -22,6 +24,15 @@ def main(args):
     mirrored_image = base_image[:, ::-1]
 
     draw.imshow_multi([base_image, shifted_image, mirrored_image], ['base', 'cyclic permutation', 'mirrored'], 'symmetries')
+
+    model = BruteForceMultiplied.get_model()
+
+    draw.make_equivariance_plot(
+        base_image,
+        f=lambda x: x[:, ::-1],
+        g=lambda x: predict_single_image(model, x),
+        name='equivariance-plot-mirror'
+    )
 
 
 if __name__ == "__main__":

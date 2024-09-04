@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
+from typing import Callable
 
 from pathlib import Path
 
@@ -69,4 +70,57 @@ class Draw:
         plt.plot(latent_sizes, loss_ratios)
         plt.xlabel("Size of latent space")
         plt.ylabel("MSE(val) / MSE(outlier)")
+        self._save_fig(name)
+
+    def make_equivariance_plot(
+        self,
+        image: npt.NDArray,
+        f: Callable[npt.NDArray, npt.NDArray],  # symmetry transformation
+        g: Callable[npt.NDArray, npt.NDArray],  # mapping of the model
+        name: str
+    ):
+        fig, axs = plt.subplots(2, 3)
+
+        axs[0, 0].imshow(image)
+        axs[0, 1].imshow(f(image))
+        axs[0, 2].imshow(g(f(image)))
+        axs[1, 0].imshow(image)
+        axs[1, 1].imshow(g(image))
+        axs[1, 2].imshow(f(g(image)))
+
+        mse = round(float(np.mean((g(f(image)) - f(g(image)))**2)), 2)
+
+        xmax, ymax = image.shape
+
+        axs[0, 0].annotate('', xy=(1.35, 0.5), xycoords='axes fraction', 
+                           xytext=(1, 0.5), textcoords='axes fraction',
+                           arrowprops=dict(facecolor='black', arrowstyle='->'))
+        axs[0, 0].text(xmax+1, ymax/2-1, 'trans')
+
+        axs[0, 1].annotate('', xy=(1.35, 0.5), xycoords='axes fraction', 
+                           xytext=(1, 0.5), textcoords='axes fraction',
+                           arrowprops=dict(facecolor='black', arrowstyle='->'))
+        axs[0, 1].text(xmax+1, ymax/2-1, 'pred')
+
+        axs[1, 0].annotate('', xy=(1.35, 0.5), xycoords='axes fraction', 
+                           xytext=(1, 0.5), textcoords='axes fraction',
+                           arrowprops=dict(facecolor='black', arrowstyle='->'))
+        axs[1, 0].text(xmax+1, ymax/2-1, 'pred')
+
+        axs[1, 1].annotate('', xy=(1.35, 0.5), xycoords='axes fraction', 
+                           xytext=(1, 0.5), textcoords='axes fraction',
+                           arrowprops=dict(facecolor='black', arrowstyle='->'))
+        axs[1, 1].text(xmax+1, ymax/2-1, 'trans')
+
+        axs[0, 2].annotate('', xy=(0.5, -0.3), xycoords='axes fraction', 
+                           xytext=(0.5, 0.), textcoords='axes fraction',
+                           arrowprops=dict(facecolor='black', arrowstyle='->'))
+        axs[0, 2].text(xmax/2+1, ymax+6, f'MSE = {mse}')
+
+        for i in range(len(axs)):
+            for j in range(len(axs[i])):
+                axs[i, j].axis('off')
+        
+        plt.tight_layout()
+
         self._save_fig(name)
