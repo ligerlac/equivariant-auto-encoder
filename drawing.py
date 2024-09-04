@@ -114,12 +114,12 @@ class Draw:
 
         axs[0, 2].annotate('', xy=(0.5, -0.3), xycoords='axes fraction', 
                            xytext=(0.5, 0.), textcoords='axes fraction',
-                           arrowprops=dict(facecolor='black', arrowstyle='->'))
+                           arrowprops=dict(facecolor='black', arrowstyle='<->'))
         axs[0, 2].text(xmax/2+1, ymax+6, f'MSE = {mse}')
 
-        for i in range(len(axs)):
-            for j in range(len(axs[i])):
-                axs[i, j].axis('off')
+        for row in axs:
+            for ax in row:
+                ax.axis('off')
         
         plt.tight_layout()
 
