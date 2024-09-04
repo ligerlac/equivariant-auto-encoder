@@ -50,6 +50,8 @@ class Draw:
         self, latent_sizes, best_val_losses, name: str
     ):
         plt.plot(latent_sizes, best_val_losses)
+        plt.xlabel("Size of latent space")
+        plt.ylabel("MSE")
         self._save_fig(name)
 
     def plot_loss_vs_latent_size(
@@ -57,5 +59,14 @@ class Draw:
     ):
         plt.plot(latent_sizes, best_val_losses)
         plt.plot(latent_sizes, outlier_losses)
+        plt.xlabel("Size of latent space")
+        plt.ylabel("MSE")
         self._save_fig(name)
 
+    def plot_loss_ratios(
+        self, latent_sizes, loss_ratios, name: str
+    ):
+        plt.plot(latent_sizes, loss_ratios)
+        plt.xlabel("Size of latent space")
+        plt.ylabel("MSE(val) / MSE(outlier)")
+        self._save_fig(name)

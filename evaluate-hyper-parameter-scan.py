@@ -34,15 +34,17 @@ def main(args):
         ls = int(re.search(r"model-(\d+)\.keras", path).group(1))
         model_dict[ls] = log
 
-    latent_sizes, best_val_losses, outlier_losses = [], [], []
-    for ls, log in sorted(log_dict.items())[5:60]:
+    latent_sizes, best_val_losses, outlier_losses, loss_ratios = [], [], [], []
+    for ls, log in sorted(log_dict.items())[5:]:
         latent_sizes.append(ls)
         idx = np.argmin(log['val_loss'])
         best_val_losses.append(log['val_loss'][idx])
         outlier_losses.append(log['outlier_loss'][idx])
+        loss_ratios.append(log['val_loss'][idx] / log['outlier_loss'][idx])
     
     draw.plot_val_loss_vs_latent_size(latent_sizes, best_val_losses, name='best-val-loss-vs-latent-size')
     draw.plot_loss_vs_latent_size(latent_sizes, best_val_losses, outlier_losses, name='loss-vs-latent-size')
+    draw.plot_loss_ratios(latent_sizes, loss_ratios, name='loss-ratios')
 
 
 if __name__ == "__main__":
