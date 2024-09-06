@@ -1,3 +1,4 @@
+import numpy as np
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
@@ -55,7 +56,8 @@ class BaselineAutoEncoder:
 
     @staticmethod
     def build_tunable_model(hp: HyperParameters):
-        ls = hp.Int("latent_size", min_value=5, max_value=100, default=50)
+        ls = hp.Int("latent_size", min_value=40, max_value=60, default=50)
+        # ls = 50
         n_o_c = hp.Int("n_outer_conv", min_value=3, max_value=30, default=10)
         o_k = hp.Int("outer_kernel", min_value=2, max_value=6, default=3)
         n_i_c = hp.Int("n_inner_conv", min_value=3, max_value=30, default=15)
@@ -70,18 +72,17 @@ class BaselineAutoEncoder:
 class BruteForceMultiplied:
     """
     create an equivariant model with brute force:
-    duplicate input by applying all elements of the respective symmetry group
-    feed each of these transformed inputs into the baseline model
-    combine all results pixels-wise (sum v mean v max ...)
+    - duplicate input by applying all elements of the respective symmetry group
+    - feed each of these transformed inputs into the baseline model
+    - apply transformation to outputs
+    - sum all results pixels-wise
     """
 
     @staticmethod
     def get_model(latent_size=60):
         model_ = BaselineAutoEncoder.get_model()
         inputs = Input((28, 28, 1))
-        x1 = inputs
-        x2 = inputs[:, ::-1, :]
-        y1 = model_(x1)
-        y2 = model_(x2)
-        outputs = y1 + y2
+        y1 = model_(inputs)
+        y2 = model_(np.flip(inputs, axis=2))
+        outputs = y1 + np.flip(y2, axis=2)
         return Model(inputs, outputs, name='bruteforce-multiplied')
